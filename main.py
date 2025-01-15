@@ -1,21 +1,39 @@
-from flask import Flask, render_template, request
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+from PIL import Image
+from transformers import BlipProcessor, BlipForConditionalGeneration
+import io
 
-app = Flask('app')
+app = Flask(__name__)
+CORS(app)
 
-@app.route('/')
-def hello_world():
-    print(request.headers)
-    return render_template(
-        'index.html',
-        user_id=request.headers['X-Replit-User-Id'],
-        user_name=request.headers['X-Replit-User-Name'],
-        user_roles=request.headers['X-Replit-User-Roles'],
-        user_bio=request.headers['X-Replit-User-Bio'],
-        user_profile_image=request.headers['X-Replit-User-Profile-Image'],
-        user_teams=request.headers['X-Replit-User-Teams'],
-        user_url=request.headers['X-Replit-User-Url']
-    )
+# Load BLIP model and processor
+processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
+model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base")
 
-if __name__ == "__main__":
+def generate_image_caption(image):
+    """
+    Generate a funny caption for the given image using the BLIP model.
+    """
+    inputs = processor(image, return_tensors="pt")
+    outputs = model.generate(**inputs)
+    caption = processor.decode(outputs[0], skip_special_tokens=True)
+    return caption
+
+@app.route('/caption', methods=['POST'])
+def generate_caption():
+    # Check if the image is in the request
+    if 'image' not in request.files:
+        return jsonify({"error": "No image uploaded"}), 400
+
+    # Get the image from the request
+    image_file = request.files['image']
+    image = Image.open(io.BytesIO(image_file.read())).convert('RGB')
+
+    # Generate caption using BLIP model
+    caption = generate_image_caption(image)
+
+    return jsonify({"caption": caption})
+
+if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
-
