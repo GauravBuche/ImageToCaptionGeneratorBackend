@@ -11,5 +11,11 @@
       "src": "/caption",
       "dest": "/api/caption.py"
     }
-  ]
+  ],
+  "functions": {
+    "api/caption.py": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  }
 }
