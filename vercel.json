@@ -1,12 +1,11 @@
 {
   "version": 2,
-  "functions": {
-    "api/caption.py": {
-      "runtime": "@vercel/python",
-      "memory": 1024,
-      "maxDuration": 10
+  "builds": [
+    {
+      "src": "api/caption.py",
+      "use": "@vercel/python"
     }
-  },
+  ],
   "routes": [
     {
       "src": "/caption",
