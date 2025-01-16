@@ -6,3 +6,4 @@ Pillow==9.0.1
 transformers==4.26.0
 setuptools==59.5.0
 wheel==0.37.1
+python3-distutils
