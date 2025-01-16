@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/caption.py": {
+      "runtime": "vercel-python@latest"
+    }
+  }
+}

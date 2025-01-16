@@ -13,7 +13,7 @@ model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-capt
 
 def generate_image_caption(image):
     """
-    Generate a funny caption for the given image using the BLIP model.
+    Generate a caption for the given image using the BLIP model.
     """
     inputs = processor(image, return_tensors="pt")
     outputs = model.generate(**inputs)
@@ -32,12 +32,9 @@ def generate_caption():
 
     # Generate caption using BLIP model
     caption = generate_image_caption(image)
-
-    # Log the caption to the console (this should be a debug log)
     print(f"Generated Caption: {caption}")
-
-    # Return the caption in JSON response
     return jsonify({"caption": caption})
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+# handler for Vercel
+def handler(request, context):
+    return app(request.environ, start_response=context.start_response)
