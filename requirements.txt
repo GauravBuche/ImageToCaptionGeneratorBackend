@@ -3,3 +3,4 @@ Flask-Cors==3.0.10
 Pillow==9.0.1
 transformers==4.26.0
 torch==1.13.1
+numpy==1.21.2

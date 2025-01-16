@@ -1,7 +1,15 @@
 {
-  "functions": {
-    "api/caption.py": {
-      "runtime": "vercel-python@latest"
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/caption.py",
+      "use": "@vercel/python"
     }
-  }
+  ],
+  "routes": [
+    {
+      "src": "/caption",
+      "dest": "/api/caption.py"
+    }
+  ]
 }
