@@ -7,17 +7,18 @@ import io
 app = Flask(__name__)
 CORS(app)
 
-# Load BLIP model and processor
-processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
-model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base")
+# Load the smaller BLIP model and processor
+processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-small")
+model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-small")
 
 def generate_image_caption(image):
     """
-    Generate a funny caption for the given image using the BLIP model.
+    Generate a caption for the given image using the BLIP model.
     """
-    inputs = processor(image, return_tensors="pt")
-    outputs = model.generate(**inputs)
-    caption = processor.decode(outputs[0], skip_special_tokens=True)
+    with torch.no_grad():  # Avoid unnecessary memory usage by disabling gradient calculations
+        inputs = processor(image, return_tensors="pt")
+        outputs = model.generate(**inputs)
+        caption = processor.decode(outputs[0], skip_special_tokens=True)
     return caption
 
 @app.route('/caption', methods=['POST'])
@@ -30,7 +31,7 @@ def generate_caption():
     image_file = request.files['image']
     image = Image.open(io.BytesIO(image_file.read())).convert('RGB')
 
-    # Generate caption using BLIP model
+    # Generate caption using the BLIP model
     caption = generate_image_caption(image)
 
     # Log the caption to the console (this should be a debug log)
