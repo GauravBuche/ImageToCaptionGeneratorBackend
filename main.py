@@ -24,6 +24,10 @@ def generate_image_caption(image):
     response = requests.post(API_URL, headers=headers, data=img_byte_arr)
     return response.json()[0]['generated_text']
 
+@app.route('/')
+def home():
+    return jsonify({"message": "Image Captioning API is running"})
+
 @app.route('/caption', methods=['POST'])
 def generate_caption():
     # Check if the image is in the request
